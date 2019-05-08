@@ -138,10 +138,7 @@ public class Fourier : MonoBehaviour
     private float Position = 0f;
     public float Speed = 0.1f;
 
-    public SignalGenerator SignalA;
-    public SignalGenerator SignalB;
-    public SignalGenerator SignalC;
-
+    public SignalGenerator[] Signals;
 
     public GameObject SeedInstanceB;
 
@@ -177,21 +174,21 @@ public class Fourier : MonoBehaviour
 
         Position += Time.deltaTime * Speed * SimTime;
 
-        SeedInstance.transform.position = new Vector3(0f, SignalA.GetValue(SimTime) + SignalB.GetValue(SimTime) + SignalC.GetValue(SimTime), 0f);
+        float SignalHeight = 0f;
+        foreach (SignalGenerator S in Signals)
+            SignalHeight += S.GetValue(SimTime);
+
+        SeedInstance.transform.position = new Vector3(0f, SignalHeight, 0f);
 
         float Winding = 1f / WindingPeriod;
                 
-        float CurrentWinding = 2f * Mathf.PI * Mathf.Repeat(SimTime, Winding) / Winding;
-
-        float SignalHeight = SignalA.GetValue(SimTime) + SignalB.GetValue(SimTime) + SignalC.GetValue(SimTime);
+        float CurrentWinding = -2f * Mathf.PI * Mathf.Repeat(SimTime, Winding) / Winding;
 
         // Debug.Log(CurrentWinding);
         
         float OX = Mathf.Cos(CurrentWinding) * SignalHeight;
         float OY = Mathf.Sin(CurrentWinding) * SignalHeight;
         SeedInstanceB.transform.position = new Vector3( OX, OY, 0f);
-
-        SeedInstanceC.transform.position = new Vector3(CurrentWinding, OX, 0f);
     }
 
     
