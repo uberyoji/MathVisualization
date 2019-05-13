@@ -2,25 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum SignalType
+{
+    Sine,
+    Square,
+    Triangle,
+    Sawtooth
+}
+
 [System.Serializable]
 public class SignalGenerator
 {
-    #region [ Properties ... ]
+    
     [SerializeField]
     private SignalType signalType = SignalType.Sine;
-    /// <summary>
-    /// Signal Type.
-    /// </summary>
+    
     public SignalType SignalType
     {
         get { return signalType; }
         set { signalType = value; }
     }
     [SerializeField]
-    private float frequency = 1f;
-    /// <summary>
-    /// Signal Frequency.
-    /// </summary>
+    private float frequency = 1f;    
     public float Frequency
     {
         get { return frequency; }
@@ -28,9 +31,7 @@ public class SignalGenerator
     }
     [SerializeField]
     private float phase = 0f;
-    /// <summary>
-    /// Signal Phase.
-    /// </summary>
+    
     public float Phase
     {
         get { return phase; }
@@ -38,9 +39,7 @@ public class SignalGenerator
     }
     [SerializeField]
     private float amplitude = 1f;
-    /// <summary>
-    /// Signal Amplitude.
-    /// </summary>
+    
     public float Amplitude
     {
         get { return amplitude; }
@@ -49,9 +48,7 @@ public class SignalGenerator
     }
     [SerializeField]
     private float offset = 0f;
-    /// <summary>
-    /// Signal Offset.
-    /// </summary>
+    
     public float Offset
     {
         get { return offset; }
@@ -59,22 +56,13 @@ public class SignalGenerator
     }
     [SerializeField]
     private float invert = 1; // Yes=-1, No=1
-    /// <summary>
-    /// Signal Inverted?
-    /// </summary>
+    
     public bool Invert
     {
         get { return invert == -1; }
         set { invert = value ? -1 : 1; }
     }
-
-    #endregion  [ Properties ]
-
-    #region [ Private ... ]
-
-    #endregion  [ Private ]
-
-    #region [ Public ... ]
+        
 
     public SignalGenerator(SignalType initialSignalType)
     {
@@ -112,21 +100,7 @@ public class SignalGenerator
 
         return (invert * amplitude * value + offset);
     }
-
-    #endregion [ Public ]
 }
-
-#region [ Enums ... ]
-
-public enum SignalType
-{
-    Sine,
-    Square,
-    Triangle,
-    Sawtooth
-}
-
-#endregion [ Enums ]
 
 public class Fourier : MonoBehaviour
 {
@@ -142,16 +116,80 @@ public class Fourier : MonoBehaviour
 
     public GameObject SeedInstanceB;
 
+    [Range(0,10)]
     public float WindingPeriod = 1f; // 1 is full circle
-
-
+    
     public GameObject SeedInstanceC;
+
+    public LineRenderer GraphWinding;
+    public LineRenderer GraphCenterOfMass;
+    public int SampleCount = 100;
+
+    Vector3 GetCenterOfMass(float WindingFrequency, int SampleCount)
+    {
+        Vector3 CenterOfMass = new Vector3(0f, 0f, 0f);
+
+        float Time = 0f;
+        float TimeDt = 2f * Mathf.PI * WindingFrequency / SampleCount;
+
+        for (int s = 0; s < SampleCount; s++)
+        {
+            float SignalHeight = 0f;
+            foreach (SignalGenerator S in Signals)
+                SignalHeight += S.GetValue(Time);
+
+            CenterOfMass += new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * SignalHeight, 0f);
+
+            Time += TimeDt;
+        }
+
+        CenterOfMass /= SampleCount;
+
+        return CenterOfMass;
+    }
+
+    void UpdateGraphCenterOfMass()
+    {        
+        float Time = 0f;
+        float TimeDt = 15f / SampleCount;
+
+        GraphCenterOfMass.positionCount = SampleCount;
+
+        for ( int s = 0; s < SampleCount; s++ )
+        {
+            Vector3 CM = GetCenterOfMass(Time, SampleCount);
+
+            GraphCenterOfMass.SetPosition(s, new Vector3(Time, CM.y, 0f));
+
+            Time += TimeDt;
+        }
+    }
+
+    void UpdateGraphWinding()
+    {
+        float Time = 0f;
+        float TimeDt = WindingPeriod / SampleCount;
+
+        GraphWinding.positionCount = SampleCount;
+
+        for (int s = 0; s < SampleCount; s++)
+        {
+            float SignalHeight = 0f;
+            foreach (SignalGenerator S in Signals)
+                SignalHeight += S.GetValue(Time);
+
+            GraphWinding.SetPosition(s, new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * SignalHeight, 0f) );
+
+            Time += TimeDt;
+        }
+    }
 
     // Use this for initialization
     void Start ()
     {
-		
-	}
+        UpdateGraphCenterOfMass();
+
+    }
 
     float EulerFunction( float t )
     {
@@ -180,6 +218,10 @@ public class Fourier : MonoBehaviour
 
         SeedInstance.transform.position = new Vector3(0f, SignalHeight, 0f);
 
+        UpdateGraphWinding();
+
+        // Winding real time
+        /*
         float Winding = 1f / WindingPeriod;
                 
         float CurrentWinding = -2f * Mathf.PI * Mathf.Repeat(SimTime, Winding) / Winding;
@@ -189,6 +231,7 @@ public class Fourier : MonoBehaviour
         float OX = Mathf.Cos(CurrentWinding) * SignalHeight;
         float OY = Mathf.Sin(CurrentWinding) * SignalHeight;
         SeedInstanceB.transform.position = new Vector3( OX, OY, 0f);
+        */
     }
 
     
