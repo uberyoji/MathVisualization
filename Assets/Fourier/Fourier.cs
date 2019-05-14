@@ -71,11 +71,7 @@ public class SignalGenerator
 
     public SignalGenerator() { }
 
-#if DEBUG
     public float GetValue(float time)
-#else
-    private float GetValue(float time)
-#endif
     {
         float value = 0f;
         float t = frequency * time + phase;

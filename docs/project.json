@@ -1,0 +1,58 @@
+{
+    "file" : "index.html",
+    "general" : 
+    {
+        "properties" : 
+        {
+            "customcolor" : 
+            {
+                "text" : "User accent",
+                "type" : "color",
+                "value" : "0.2 0.8 1"
+            },
+            "schemecolor" : 
+            {
+                "text" : "Scheme color",
+                "type" : "color",
+                "value" : "0.7 0.2 0.1"
+            },
+            "custombool" : 
+            {
+                "text" : "User bool",
+                "type" : "bool",
+                "value" : false
+            },
+            "customint" :
+            {
+                "text" : "User slider",
+                "type" : "slider",
+                "value" : 50,
+                "min" : 0,
+                "max" : 100
+            },
+            "customcombo" :
+            {
+                "text" : "User combo",
+                "type" : "combo",
+                "value" : 1,
+                "options" :
+                [
+                    {
+                        "value" : 1,
+                        "label" : "First"
+                    },
+                    {
+                        "value" : 2,
+                        "label" : "Second"
+                    },
+                    {
+                        "value" : 3,
+                        "label" : "Third"
+                    }
+                ]
+            }
+        }
+    },
+    "title" : "Advanced Web Tutorial - User Properties",
+    "type" : "web"
+}

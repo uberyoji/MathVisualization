@@ -4,4 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Mandalas/Mandalas.unity
+    guid: b3c56db301f9b1d45a27def45d16cacb
+  m_configObjects: {}
