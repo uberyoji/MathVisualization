@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class GeoMandala : MonoBehaviour
+public class Mandala : MonoBehaviour
 {
     public LineRenderer LR;
         
@@ -31,6 +31,7 @@ public class GeoMandala : MonoBehaviour
     {
         if (LastPointCount != PointCount || LastIterations != Iterations )
         {
+            Iterations = PointCount * 5;
             LR.positionCount = (PointCount + 1) * (Iterations + 1);
 
             UpdateControlPoints();
@@ -78,7 +79,7 @@ public class GeoMandala : MonoBehaviour
 
         for( int s = 0; s<PointCount; s++ )
         {
-            CPS[s].transform.position = new Vector3( Mathf.Cos(a), Mathf.Sin(a), 0f);
+            CPS[s].transform.position = new Vector3( Mathf.Sin(a), -Mathf.Cos(a), -(float)s/PointCount);
             a += da;
         }
     }
