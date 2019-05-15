@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
+// When using DragAnDrop make sure to:
+// Add 2D collider to object
+// Add RayCaster2D to Camera
+// Add EventSystem in scene hierarchy
+
 public class DragAndDrop : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public static GameObject DraggedInstance;

@@ -10,7 +10,11 @@ public class Fractal : MonoBehaviour
 {
     public LineRenderer LR;
 
-    public List<Vector3> SeedPositions;
+    [Range(3,8)]
+    public int SeedObjectCount = 3;
+    private int LastSeedObjectCount = 0;
+    public GameObject[] SeedObjects;
+    private List<Vector3> SeedPositions = new List<Vector3>();
     private List<Vector3> SeedVectors = new List<Vector3>();
 
     [Range(0, 5)]
@@ -21,6 +25,10 @@ public class Fractal : MonoBehaviour
 
     public void ResetSeed()
     {
+        SeedPositions.Clear();
+        for ( int i=0; i<SeedObjectCount; i++)
+            SeedPositions.Add(SeedObjects[i].transform.position);
+
         float Length = (SeedPositions[SeedPositions.Count - 1] - SeedPositions[0]).magnitude;
 
         SeedVectors.Clear();
@@ -77,21 +85,52 @@ public class Fractal : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        UpdateControlPoints();
+        SetInitialControlPointPosition();
+
         ResetSeed();
         UpdateLineRenderer();
+    }
+
+    private void SetInitialControlPointPosition()
+    {
+        float da = Mathf.PI * 2f / SeedObjectCount;
+        float a = 0f;
+
+        for (int s = 0; s < SeedObjectCount; s++)
+        {
+            SeedObjects[s].transform.position = new Vector3( -0.5f + s / 2.0f * SeedObjectCount, Mathf.Sin(a), 0f);
+            a += da;
+        }
+    }
+
+    private void UpdateControlPoints()
+    {
+        for (int i = 0; i < SeedObjects.Length; i++)
+            SeedObjects[i].SetActive(i < SeedObjectCount);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (LastIterationCount != IterationCount)
+        //if (LastIterationCount != IterationCount)
         {
             LastIterationCount = IterationCount;
 
             ApplyIterations();
 
-            UpdateLineRenderer();
+            // UpdateLineRenderer();
         }
+
+        if( LastSeedObjectCount != SeedObjectCount)
+        {
+            LastSeedObjectCount = SeedObjectCount;
+
+            UpdateControlPoints();
+            SetInitialControlPointPosition();
+        }
+
+        UpdateLineRenderer();
     }
 }
 
