@@ -17,17 +17,21 @@ public class Fractal : MonoBehaviour
     private List<Vector3> SeedPositions = new List<Vector3>();
     private List<Vector3> SeedVectors = new List<Vector3>();
 
+    public Fractal[] Sync;
+
     [Range(0, 5)]
     public int IterationCount = 0;
-    private int LastIterationCount = -1;
+//    private int LastIterationCount = -1;
 
     private List<Vector3> Positions;
 
     public void ResetSeed()
     {
+        UpdateControlPoints();
+
         SeedPositions.Clear();
         for ( int i=0; i<SeedObjectCount; i++)
-            SeedPositions.Add(SeedObjects[i].transform.position);
+            SeedPositions.Add(SeedObjects[i].transform.localPosition);
 
         float Length = (SeedPositions[SeedPositions.Count - 1] - SeedPositions[0]).magnitude;
 
@@ -84,27 +88,24 @@ public class Fractal : MonoBehaviour
 
     // Use this for initialization
     void Start()
-    {
-        UpdateControlPoints();
-        SetInitialControlPointPosition();
-
+    {   
         ResetSeed();
         UpdateLineRenderer();
     }
 
-    private void SetInitialControlPointPosition()
+    public void SetInitialControlPointPosition()
     {
         float da = Mathf.PI * 2f / SeedObjectCount;
         float a = 0f;
 
         for (int s = 0; s < SeedObjectCount; s++)
         {
-            SeedObjects[s].transform.position = new Vector3( -0.5f + s / 2.0f * SeedObjectCount, Mathf.Sin(a), 0f);
+            SeedObjects[s].transform.localPosition = new Vector3( -1f + 2f*s / (float)SeedObjectCount, Mathf.Sin(a), 0f);
             a += da;
         }
     }
 
-    private void UpdateControlPoints()
+    public void UpdateControlPoints()
     {
         for (int i = 0; i < SeedObjects.Length; i++)
             SeedObjects[i].SetActive(i < SeedObjectCount);
@@ -113,9 +114,10 @@ public class Fractal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        SyncSeedObjects();
         //if (LastIterationCount != IterationCount)
         {
-            LastIterationCount = IterationCount;
+//            LastIterationCount = IterationCount;
 
             ApplyIterations();
 
@@ -131,6 +133,22 @@ public class Fractal : MonoBehaviour
         }
 
         UpdateLineRenderer();
+    }
+
+    void SyncSeedObjects()
+    {
+        foreach(Fractal f in Sync )
+        {
+            f.IterationCount = IterationCount;
+            f.SeedObjectCount = SeedObjectCount;
+            f.UpdateControlPoints();
+            
+            for(int s=0;s<SeedObjectCount;s++)
+            {
+                f.SeedObjects[s].transform.localPosition = SeedObjects[s].transform.localPosition;
+                f.ResetSeed();
+            }
+        }
     }
 }
 
@@ -152,6 +170,7 @@ class FractalEditor : Editor
 
         if (GUILayout.Button("Update Line Renderer"))
         {
+            F.SetInitialControlPointPosition();
             F.ResetSeed();
             F.UpdateLineRenderer();
         }
