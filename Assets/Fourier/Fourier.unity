@@ -246,9 +246,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 402637581}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &751602928
 PrefabInstance:
@@ -5047,7 +5048,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalScale.x
@@ -5070,7 +5071,7 @@ PrefabInstance:
     - target: {fileID: 212790239658404162, guid: 9a09544036b6bd542a07e8714259f453,
         type: 3}
       propertyPath: m_Color.g
-      value: 1
+      value: 0.08363296
       objectReference: {fileID: 0}
     - target: {fileID: 212790239658404162, guid: 9a09544036b6bd542a07e8714259f453,
         type: 3}
@@ -9916,12 +9917,25 @@ MonoBehaviour:
   Signals:
   - signalType: 0
     frequency: 3
-    phase: 0
+    phase: 0.125
     amplitude: 1
-    offset: 0
-    invert: 1
+    offset: 1
+    invert: -1
+  - signalType: 0
+    frequency: 5
+    phase: 0.25
+    amplitude: 1
+    offset: 1
+    invert: -1
+  - signalType: 0
+    frequency: 6
+    phase: 0.25
+    amplitude: 1
+    offset: 1
+    invert: -1
   SeedInstanceB: {fileID: 1911707049}
-  WindingPeriod: 1
+  WindingPeriod: 3
+  AnimateWinding: 0
   SeedInstanceC: {fileID: 402637579}
   GraphWinding: {fileID: 722144009}
   GraphCenterOfMass: {fileID: 1737856470}
@@ -14758,11 +14772,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1737856469}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6, y: -4, z: 0}
+  m_LocalPosition: {x: -6, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1911707049 stripped
 GameObject:
@@ -14827,11 +14841,11 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 722144010}
     m_Modifications:
     - target: {fileID: 1542086264028866, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_Name
-      value: SeedC
+      value: CenterOfMass
       objectReference: {fileID: 0}
     - target: {fileID: 1542086264028866, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_IsActive
@@ -14843,7 +14857,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14851,15 +14865,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalRotation.w
@@ -14867,7 +14881,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4659110849492376, guid: 9a09544036b6bd542a07e8714259f453, type: 3}
       propertyPath: m_LocalScale.x

@@ -78,7 +78,7 @@ public class SignalGenerator
         switch (signalType)
         { // http://en.wikipedia.org/wiki/Waveform
             case SignalType.Sine: // sin( 2 * pi * t )
-                value = (float)Mathf.Sin(2f * Mathf.PI * t);
+                value = (float)Mathf.Sin(2f * Mathf.PI * (time+phase) * frequency);
                 break;
             case SignalType.Square: // sign( sin( 2 * pi * t ) )
                 value = Mathf.Sign(Mathf.Sin(2f * Mathf.PI * t));
@@ -105,7 +105,6 @@ public class Fourier : MonoBehaviour
     public GameObject SeedInstance;
     public ParticleSystem PS;
 
-    private float Position = 0f;
     public float Speed = 0.1f;
 
     public SignalGenerator[] Signals;
@@ -114,6 +113,7 @@ public class Fourier : MonoBehaviour
 
     [Range(0,10)]
     public float WindingPeriod = 1f; // 1 is full circle
+    public bool AnimateWinding = false;
     
     public GameObject SeedInstanceC;
 
@@ -131,10 +131,11 @@ public class Fourier : MonoBehaviour
         for (int s = 0; s < SampleCount; s++)
         {
             float SignalHeight = 0f;
+            float FT = (float)s / SampleCount;
             foreach (SignalGenerator S in Signals)
-                SignalHeight += S.GetValue(Time);
+                SignalHeight += S.GetValue(FT);
 
-            CenterOfMass += new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * SignalHeight, 0f);
+            CenterOfMass += new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * -SignalHeight, 0f);
 
             Time += TimeDt;
         }
@@ -144,7 +145,7 @@ public class Fourier : MonoBehaviour
         return CenterOfMass;
     }
 
-    void UpdateGraphCenterOfMass()
+    void UpdateGraphCenterOfMassVariation()
     {        
         float Time = 0f;
         float TimeDt = 15f / SampleCount;
@@ -155,7 +156,7 @@ public class Fourier : MonoBehaviour
         {
             Vector3 CM = GetCenterOfMass(Time, SampleCount);
 
-            GraphCenterOfMass.SetPosition(s, new Vector3(Time, CM.y, 0f));
+            GraphCenterOfMass.SetPosition(s, new Vector3(Time, CM.x, 0f));
 
             Time += TimeDt;
         }
@@ -164,17 +165,19 @@ public class Fourier : MonoBehaviour
     void UpdateGraphWinding()
     {
         float Time = 0f;
-        float TimeDt = WindingPeriod / SampleCount;
+        float TimeDt = WindingPeriod * 2 * Mathf.PI / SampleCount;
 
         GraphWinding.positionCount = SampleCount;
-
+                
         for (int s = 0; s < SampleCount; s++)
         {
             float SignalHeight = 0f;
-            foreach (SignalGenerator S in Signals)
-                SignalHeight += S.GetValue(Time);
+            float FT = (float)s/SampleCount;
 
-            GraphWinding.SetPosition(s, new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * SignalHeight, 0f) );
+            foreach (SignalGenerator S in Signals)
+                SignalHeight += S.GetValue(FT);
+
+            GraphWinding.SetPosition(s, new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * -SignalHeight, 0f) );
 
             Time += TimeDt;
         }
@@ -183,8 +186,7 @@ public class Fourier : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        UpdateGraphCenterOfMass();
-
+        UpdateGraphCenterOfMassVariation();
     }
 
     float EulerFunction( float t )
@@ -199,22 +201,29 @@ public class Fourier : MonoBehaviour
 
         float SimTime = Time.time * TimeScale;
 
+        if (AnimateWinding)
+            WindingPeriod = Mathf.Repeat( SimTime, 9f);
+
+        //        Debug.Log(Mathf.Sin(0f)+", "+ Mathf.Sin(Mathf.PI/2f)+ ", "+ Mathf.Sin(Mathf.PI)+ ", "+ Mathf.Sin(3f*Mathf.PI/2f)+ ", ");
+
         var main = PS.main;
 
         if (Mathf.RoundToInt(SimTime) % 2 == 0)
             main.startColor = Color.white;
         else
             main.startColor = Color.yellow;
-
-        Position += Time.deltaTime * Speed * SimTime;
-
+                
         float SignalHeight = 0f;
         foreach (SignalGenerator S in Signals)
             SignalHeight += S.GetValue(SimTime);
 
         SeedInstance.transform.position = new Vector3(0f, SignalHeight, 0f);
 
+        SeedInstanceC.transform.localPosition = GetCenterOfMass(WindingPeriod, SampleCount);
+
         UpdateGraphWinding();
+
+        UpdateGraphCenterOfMassVariation();
 
         // Winding real time
         /*
