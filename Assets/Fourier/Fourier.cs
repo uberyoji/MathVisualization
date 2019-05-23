@@ -102,10 +102,9 @@ public class Fourier : MonoBehaviour
 {
     public float TimeScale = 0.5f;
 
-    public GameObject SeedInstance;
+    public GameObject MarkerSignal;
+    private Vector3 MarkerSignalPosition = new Vector3();
     public ParticleSystem PS;
-
-    public float Speed = 0.1f;
 
     public SignalGenerator[] Signals;
 
@@ -115,32 +114,42 @@ public class Fourier : MonoBehaviour
     public float WindingPeriod = 1f; // 1 is full circle
     public bool AnimateWinding = false;
     
-    public GameObject SeedInstanceC;
+    public GameObject MarkerCenterOfMass;
+    public float CenterOfMassScale = 1f;
 
     public LineRenderer GraphWinding;
     public LineRenderer GraphCenterOfMass;
+    public GameObject TimeMarker;
+    private Vector3 TimeMarkerPosition;
+
     public int SampleCount = 100;
+    public int SampleMultiplier = 1;
+
+    private Vector3 CenterOfMass = new Vector3();
+    private Vector3 Temp = new Vector3();
 
     Vector3 GetCenterOfMass(float WindingFrequency, int SampleCount)
     {
-        Vector3 CenterOfMass = new Vector3(0f, 0f, 0f);
+        CenterOfMass.Set(0f, 0f, 0f);
 
         float Time = 0f;
         float TimeDt = 2f * Mathf.PI * WindingFrequency / SampleCount;
-
-        for (int s = 0; s < SampleCount; s++)
+        
+        for (int s = 0; s < SampleCount * SampleMultiplier; s++)
         {
             float SignalHeight = 0f;
             float FT = (float)s / SampleCount;
             foreach (SignalGenerator S in Signals)
                 SignalHeight += S.GetValue(FT);
 
-            CenterOfMass += new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * -SignalHeight, 0f);
+            Temp.Set(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * -SignalHeight, 0f);
+
+            CenterOfMass += Temp;
 
             Time += TimeDt;
         }
 
-        CenterOfMass /= SampleCount;
+        CenterOfMass /= (SampleCount*SampleMultiplier);
 
         return CenterOfMass;
     }
@@ -159,7 +168,7 @@ public class Fourier : MonoBehaviour
             GraphCenterOfMass.SetPosition(s, new Vector3(Time, CM.x, 0f));
 
             Time += TimeDt;
-        }
+        }        
     }
 
     void UpdateGraphWinding()
@@ -167,9 +176,9 @@ public class Fourier : MonoBehaviour
         float Time = 0f;
         float TimeDt = WindingPeriod * 2 * Mathf.PI / SampleCount;
 
-        GraphWinding.positionCount = SampleCount;
+        GraphWinding.positionCount = SampleCount * SampleMultiplier;
                 
-        for (int s = 0; s < SampleCount; s++)
+        for (int s = 0; s < SampleCount* SampleMultiplier; s++)
         {
             float SignalHeight = 0f;
             float FT = (float)s/SampleCount;
@@ -177,10 +186,13 @@ public class Fourier : MonoBehaviour
             foreach (SignalGenerator S in Signals)
                 SignalHeight += S.GetValue(FT);
 
-            GraphWinding.SetPosition(s, new Vector3(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * -SignalHeight, 0f) );
+            Temp.Set(Mathf.Cos(Time) * SignalHeight, Mathf.Sin(Time) * -SignalHeight, 0f);
+            GraphWinding.SetPosition(s, Temp);
 
             Time += TimeDt;
         }
+
+        MarkerCenterOfMass.transform.localPosition = GetCenterOfMass(WindingPeriod, SampleCount) * CenterOfMassScale;
     }
 
     // Use this for initialization
@@ -193,50 +205,43 @@ public class Fourier : MonoBehaviour
     {
         return Mathf.Exp(2 * Mathf.PI * t);
     }
-	
+    	
 	// Update is called once per frame
 	void Update ()
     {
-        // Time.timeScale = TimeScale;
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+            WindingPeriod -= 0.1f;
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+            WindingPeriod += 0.1f;
 
         float SimTime = Time.time * TimeScale;
 
         if (AnimateWinding)
             WindingPeriod = Mathf.Repeat( SimTime, 9f);
 
-        //        Debug.Log(Mathf.Sin(0f)+", "+ Mathf.Sin(Mathf.PI/2f)+ ", "+ Mathf.Sin(Mathf.PI)+ ", "+ Mathf.Sin(3f*Mathf.PI/2f)+ ", ");
-
+        // Alternate color so that we time change
         var main = PS.main;
-
         if (Mathf.RoundToInt(SimTime) % 2 == 0)
             main.startColor = Color.white;
         else
             main.startColor = Color.yellow;
                 
+        // Update signal marker
         float SignalHeight = 0f;
         foreach (SignalGenerator S in Signals)
             SignalHeight += S.GetValue(SimTime);
 
-        SeedInstance.transform.position = new Vector3(0f, SignalHeight, 0f);
-
-        SeedInstanceC.transform.localPosition = GetCenterOfMass(WindingPeriod, SampleCount);
-
+        MarkerSignalPosition.Set(0f, SignalHeight, 0f);
+        MarkerSignal.transform.position = MarkerSignalPosition;
+        
+        // Update winding graph
         UpdateGraphWinding();
 
-        UpdateGraphCenterOfMassVariation();
+        // Update center of mass variation graph
+        //        UpdateGraphCenterOfMassVariation();
 
-        // Winding real time
-        /*
-        float Winding = 1f / WindingPeriod;
-                
-        float CurrentWinding = -2f * Mathf.PI * Mathf.Repeat(SimTime, Winding) / Winding;
-
-        // Debug.Log(CurrentWinding);
-        
-        float OX = Mathf.Cos(CurrentWinding) * SignalHeight;
-        float OY = Mathf.Sin(CurrentWinding) * SignalHeight;
-        SeedInstanceB.transform.position = new Vector3( OX, OY, 0f);
-        */
+        TimeMarkerPosition.Set(WindingPeriod, 0f, 0f);
+        TimeMarker.transform.localPosition = TimeMarkerPosition;
     }
 
     
