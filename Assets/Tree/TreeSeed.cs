@@ -2,6 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Inspiration: https://generativelandscapes.wordpress.com/2014/10/07/fractal-trees-basic-l-system-example-9-4/
+
+// TODO: Add variant system
+// TODO: Variant: 3 Branches (trident)
+// TODO: Variant: 1 angled + 1straight followed by 2 angled
+// TODO: Variant: 1 straight + 1 alternating angled
+// TODO: Add noise on separation angle
+// TODO: Add noise on distance ratio
+
+public class BranchData
+{
+    public GameObject GO;
+    public TreeSeed TS;
+    public Quaternion Rot = new Quaternion();
+}
+
 public class TreeSeed : MonoBehaviour
 {
     [Range(0,90)]
@@ -10,6 +26,8 @@ public class TreeSeed : MonoBehaviour
     [HideInInspector]
     public int Iteration = 0;
     public int MaxIterationAmount = 8;
+
+    public int SplitIndex = 0;
 
     public float GrowthDelay = 1f;
 
@@ -24,11 +42,16 @@ public class TreeSeed : MonoBehaviour
 
     public LineRenderer LR;
 
+    [HideInInspector]
+    public BranchData[] Branches = new[] { new BranchData(), new BranchData() };
+
+    /*
     private GameObject BranchA;
     private GameObject BranchB;
 
     private Quaternion RotA = new Quaternion();
     private Quaternion RotB = new Quaternion();
+    */
 
     public GameObject Prefab;
 
@@ -42,11 +65,13 @@ public class TreeSeed : MonoBehaviour
 
     private Transform ParentTransform;
 
+    /*
     [HideInInspector]
     public TreeSeed BranchTSA;
 
     [HideInInspector]
     public TreeSeed BranchTSB;
+    */
 
     [HideInInspector]
     public bool Propagate = false;
@@ -65,56 +90,71 @@ public class TreeSeed : MonoBehaviour
         LR.startWidth = LineWidth;
         LR.endWidth = LineWidth * LineWidthRatio;
         
-        RotA.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + SeparationAngle );
-        RotB.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z - SeparationAngle);
-
         UpdateColorGradient();
     }
 
+    /*
     void UpdateBranchesFromParent()
     { 
-        UpdateBranchFromParentA();
-        UpdateBranchFromParentB();
+        foreach( var B in Branches )
+        {
+            UpdateBranch(B);
+        }
+    }
+    */
+
+    float GetDeltaAngle( int Type, TreeSeed Branch )
+    {
+        switch( Type )
+        {
+            case 0: //  1 left, 1 right
+                return -Branch.SeparationAngle + 2 * Branch.SeparationAngle * Branch.SplitIndex;
+            case 1: //  1 straight + 1 alternating angled
+                return Branch.SeparationAngle * ( -1 + 2 * (Branch.Iteration % 2) ) * Branch.SplitIndex;
+            case 2: //  1 straight + 1 alternating angled
+                if ( Branch.Iteration % 2 == 0 )
+                {
+                    return -Branch.SeparationAngle + 2 * Branch.SeparationAngle * Branch.SplitIndex;
+                }
+                else
+                {
+                    return Branch.SeparationAngle * (-1 + 2 * (Branch.Iteration % 3)) * Branch.SplitIndex;
+                }
+            case 3: // v split with alternating separation
+                return (-Branch.SeparationAngle + 2 * Branch.SeparationAngle * Branch.SplitIndex) * ( 0.5f + (Branch.Iteration % 2 ) * 0.5f );
+            case 4: // spread separation across branches
+                float Angle = Branch.SeparationAngle * Branch.Iteration / Branch.MaxIterationAmount;
+                return (-Angle + 2 * Angle * Branch.SplitIndex);
+
+        }
+        return 0f;
     }
 
-    void UpdateBranchFromParentA()
+    void UpdateBranch( BranchData B )
     {
-        RotA.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + SeparationAngle);
-
-        BranchTSA.transform.rotation = RotA;
-
-        BranchTSA.DistanceRatio = DistanceRatio;
-        BranchTSA.SeparationAngle = SeparationAngle;
-        BranchTSA.MaxIterationAmount = MaxIterationAmount;
-        BranchTSA.Iteration = Iteration + 1;
-        BranchTSA.Distance = Distance * DistanceRatio;
-        BranchTSA.LineWidth = LineWidth * LineWidthRatio;
-        BranchTSA.Color = Color;
-
-        if (Iteration < MaxIterationAmount && BranchTSA.gameObject.activeSelf == false)
-            BranchTSA.gameObject.SetActive(true);
-
-        if (Iteration >= MaxIterationAmount && BranchTSA.gameObject.activeSelf == true)
-            BranchTSA.gameObject.SetActive(false);
+        UpdateBranchFromParent(B.TS, B.Rot, GetDeltaAngle( 4, B.TS ) );
     }
-    void UpdateBranchFromParentB()
+
+    void UpdateBranchFromParent( TreeSeed Branch, Quaternion Rot, float DeltaAngle )
     {
-        RotB.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z - SeparationAngle);
+        // propagate data
+        Branch.DistanceRatio = DistanceRatio;
+        Branch.SeparationAngle = SeparationAngle;
+        Branch.MaxIterationAmount = MaxIterationAmount;
+        Branch.Iteration = Iteration + 1;
+        Branch.Distance = Distance * DistanceRatio;
+        Branch.LineWidth = LineWidth * LineWidthRatio;
+        Branch.Color = Color;
 
-        BranchTSB.transform.rotation = RotB;
+        Rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + DeltaAngle);
+        Branch.transform.rotation = Rot;
 
-        BranchTSB.DistanceRatio = DistanceRatio;
-        BranchTSB.SeparationAngle = SeparationAngle;
-        BranchTSB.MaxIterationAmount = MaxIterationAmount;
-        BranchTSB.Iteration = Iteration + 1;
-        BranchTSB.Distance = Distance * DistanceRatio;
-        BranchTSB.LineWidth = LineWidth * LineWidthRatio;
-        BranchTSB.Color = Color;
+        // deactivate gameobjects beyond max iteration
+        if (Iteration < MaxIterationAmount && Branch.gameObject.activeSelf == false)
+            Branch.gameObject.SetActive(true);
 
-        if (Iteration < MaxIterationAmount && BranchTSB.gameObject.activeSelf == false)
-            BranchTSB.gameObject.SetActive(true);
-        if (Iteration >= MaxIterationAmount && BranchTSB.gameObject.activeSelf == true)
-            BranchTSB.gameObject.SetActive(false);
+        if (Iteration >= MaxIterationAmount && Branch.gameObject.activeSelf == true)
+            Branch.gameObject.SetActive(false);
     }
 
     void UpdateColorGradient()
@@ -137,17 +177,18 @@ public class TreeSeed : MonoBehaviour
     {
         if( Propagate )
         {
-            if(BranchTSA && Iteration < MaxIterationAmount-1)
+            if( Iteration < MaxIterationAmount-1)
             {
-                BranchTSA.Propagate = true;
-                UpdateBranchFromParentA();
-            }                
-            if(BranchTSB && Iteration < MaxIterationAmount-1)
-            {
-                BranchTSB.Propagate = true;
-                UpdateBranchFromParentB();
+                foreach (var B in Branches)
+                {
+                    if (B.TS)
+                    {
+                        B.TS.Propagate = true;
+                        UpdateBranch(B);
+                    }
+                }                
             }
-
+            
             LR.SetPosition(0, ParentTransform.position);
             LR.SetPosition(1, transform.position);
 
@@ -166,11 +207,28 @@ public class TreeSeed : MonoBehaviour
             transform.position = ParentTransform.position + transform.right * Distance;
             LR.SetPosition(1, transform.position);
 
+            if ( Iteration < MaxIterationAmount - 1)
+            {
+                for( int i = 0; i < Branches.Length; i++ )
+                {
+                    if(Branches[i].GO == null )
+                    {
+                        Branches[i].GO = GameObject.Instantiate(Prefab, transform.position, Branches[i].Rot);
+                        Branches[i].TS = Branches[i].GO.GetComponent<TreeSeed>();
+                        Branches[i].TS.ParentTransform = transform;
+                        Branches[i].TS.SplitIndex = i;
+                        UpdateBranch(Branches[i]);
+                    }                   
+                }
+            }
+
+            /*
             if ( BranchA == null && Iteration < MaxIterationAmount-1)
             {
                 BranchA = GameObject.Instantiate(Prefab, transform.position, RotA);
                 BranchTSA = BranchA.GetComponent<TreeSeed>();
                 BranchTSA.ParentTransform = transform;
+                BranchTSA.SplitIndex = 0;
                 UpdateBranchFromParentA();
             }
             if (BranchB == null && Iteration < MaxIterationAmount-1)
@@ -178,8 +236,10 @@ public class TreeSeed : MonoBehaviour
                 BranchB = GameObject.Instantiate(Prefab, transform.position, RotB);                
                 BranchTSB = BranchB.GetComponent<TreeSeed>();
                 BranchTSB.ParentTransform = transform;
+                BranchTSB.SplitIndex = 1;
                 UpdateBranchFromParentB();
-            }            
+            } 
+            */           
         }        
     }
 }

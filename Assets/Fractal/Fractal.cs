@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+// Inspiration: https://generativelandscapes.wordpress.com/2014/09/12/basic-fractal-generator-example-9-1/
+
 public class Fractal : MonoBehaviour
 {
     public LineRenderer LR;
