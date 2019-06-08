@@ -40,6 +40,8 @@ public class TreeSeed : MonoBehaviour
     public float LineWidth = 0.5f;
     public float LineWidthRatio = 0.5f;
 
+    public int Variant = 0;
+
     public LineRenderer LR;
 
     [HideInInspector]
@@ -132,7 +134,7 @@ public class TreeSeed : MonoBehaviour
 
     void UpdateBranch( BranchData B )
     {
-        UpdateBranchFromParent(B.TS, B.Rot, GetDeltaAngle( 4, B.TS ) );
+        UpdateBranchFromParent(B.TS, B.Rot, GetDeltaAngle( Variant, B.TS ) );
     }
 
     void UpdateBranchFromParent( TreeSeed Branch, Quaternion Rot, float DeltaAngle )
@@ -145,6 +147,7 @@ public class TreeSeed : MonoBehaviour
         Branch.Distance = Distance * DistanceRatio;
         Branch.LineWidth = LineWidth * LineWidthRatio;
         Branch.Color = Color;
+        Branch.Variant = Variant;
 
         Rot.eulerAngles = new Vector3(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + DeltaAngle);
         Branch.transform.rotation = Rot;
@@ -220,26 +223,7 @@ public class TreeSeed : MonoBehaviour
                         UpdateBranch(Branches[i]);
                     }                   
                 }
-            }
-
-            /*
-            if ( BranchA == null && Iteration < MaxIterationAmount-1)
-            {
-                BranchA = GameObject.Instantiate(Prefab, transform.position, RotA);
-                BranchTSA = BranchA.GetComponent<TreeSeed>();
-                BranchTSA.ParentTransform = transform;
-                BranchTSA.SplitIndex = 0;
-                UpdateBranchFromParentA();
-            }
-            if (BranchB == null && Iteration < MaxIterationAmount-1)
-            {
-                BranchB = GameObject.Instantiate(Prefab, transform.position, RotB);                
-                BranchTSB = BranchB.GetComponent<TreeSeed>();
-                BranchTSB.ParentTransform = transform;
-                BranchTSB.SplitIndex = 1;
-                UpdateBranchFromParentB();
-            } 
-            */           
+            }    
         }        
     }
 }
