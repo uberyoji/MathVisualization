@@ -87,22 +87,23 @@ public class CellularAutomata : MonoBehaviour
     }
 
     public GameObject Prefab;
-    private CellRef[,] Cubes;
+    private CellRef[,] CellQuads;
     public Material CellOff;
     public Material CellOn;
 
     void InitCells()
     {
-        Cubes = new CellRef[GridWidth, GridWidth];
+        CellQuads = new CellRef[GridWidth, GridWidth];
 
         for (var x = 0; x < GridWidth; x++)
         {
             for (var y = 0; y < GridWidth; y++)
             {
-                Cubes[x, y] = new CellRef();
-                Cubes[x, y].GO = GameObject.Instantiate(Prefab, new Vector3(x, y, 0), Quaternion.identity);
-                Cubes[x, y].R = Cubes[x, y].GO.GetComponent<Renderer>();
-                Cubes[x, y].R.material = CellOff;
+                CellQuads[x, y] = new CellRef();
+                CellQuads[x, y].GO = GameObject.Instantiate(Prefab, new Vector3(x, y, 0), Quaternion.identity);
+                CellQuads[x, y].GO.transform.parent = transform;
+                CellQuads[x, y].R = CellQuads[x, y].GO.GetComponent<Renderer>();
+                CellQuads[x, y].R.material = CellOff;
             }
         }
     }
@@ -113,7 +114,7 @@ public class CellularAutomata : MonoBehaviour
         {
             for (var y = 0; y < GridWidth; y++)
             {
-                Cubes[x, y].R.material = Cells[x, y] ? CellOn : CellOff;
+                CellQuads[x, y].R.material = Cells[x, y] ? CellOn : CellOff;
             }
         }
     }

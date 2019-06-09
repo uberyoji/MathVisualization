@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/CelullarAutomata/GameOfLife.unity
+    guid: e36b4eb8a603c8d4d84ac638e61a9653
+  - enabled: 1
     path: Assets/Tree/Tree.unity
     guid: 27bf559fe90d6614184416a8bc5140f5
   - enabled: 1
