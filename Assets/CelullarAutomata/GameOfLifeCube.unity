@@ -638,9 +638,9 @@ MonoBehaviour:
   RuleB: 2
   RuleC: 2
   RuleD: 3
-  Frequency: 5
+  Frequency: 0.25
   CubeAnimationScale: 0.25
-  InitialSeedChance: 0.25
+  InitialSeedChance: 0.15
   GotoGeneration: 3013
   Color:
     serializedVersion: 2
