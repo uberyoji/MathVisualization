@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameOfLifeCube : MonoBehaviour
 {
@@ -17,9 +18,7 @@ public class GameOfLifeCube : MonoBehaviour
     public int GotoGeneration = 0;
 
     public Gradient Color;
-
-    public TextMeshProUGUI Text;
-
+    
     // naive implementation
     private bool[,,,] Cells;
 
@@ -103,14 +102,8 @@ public class GameOfLifeCube : MonoBehaviour
 
     float NextUpdate = 0f;
 
-    // Update is called once per frame
-    void Update()
+    void ApplyRule()
     {
-        if (NextUpdate > Time.time)
-            return;
-
-        NextUpdate = Time.time + (1f / Frequency);
-
         // apply rule
         /*
         In the Game of Life, a population of cells evolves over time. In each generation, whether a cells lives or dies depends on its neighbors.
@@ -124,7 +117,7 @@ public class GameOfLifeCube : MonoBehaviour
 
         int NeighborCount = 0;
 
-        if( GenerationCounter < GotoGeneration )
+        if (GenerationCounter < GotoGeneration)
         {
             for (int z = 1; z < GridDimension - 1; z++)
                 for (int y = 1; y < GridDimension - 1; y++)
@@ -143,13 +136,27 @@ public class GameOfLifeCube : MonoBehaviour
                     }
 
             UpdateCellMaterial();
-            
+
             ++GenerationCounter;
             Src = GenerationCounter % 2;
             Dst = (Src + 1) % 2;
 
-            Text.text = "Generation\r\n" + GenerationCounter.ToString();
-        }            
+            TextGeneration.text = "Generation\r\n" + GenerationCounter.ToString();
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (AutoPlay == false)
+            return;
+
+        if (NextUpdate > Time.time)
+            return;
+
+        NextUpdate = Time.time + (1f / Frequency);
+
+        ApplyRule();
     }
 
     public class CellRef
@@ -219,5 +226,57 @@ public class GameOfLifeCube : MonoBehaviour
             for (var y = 0; y < GridDimension; y++)
                 for (var x = 0; x < GridDimension; x++)
                     CellCubes[x, y, z].CC.Toggle(Cells[Dst, x, y, z]);
+    }
+
+
+    /// UI
+    /// 
+
+    private bool AutoPlay = false;
+
+    public Button BtnPlayStop;
+    public Sprite Play;
+    public Sprite Stop;
+    public TextMeshProUGUI TextGeneration;
+    public TextMeshProUGUI TextSpeed;
+
+    class Preset
+    {
+        public Preset(float S, string T) { TimeScale = S; Text = T; }
+        public float TimeScale;
+        public string Text;
+    }
+
+    private Preset[] Presets = new Preset[] { new Preset(1f, "1x"), new Preset(2f, "2x"), new Preset(4f, "4x"), new Preset(8f, "8x"), new Preset(16f, "16x"), new Preset(32f, "32X") };
+    private int PresetIndex = 0;
+    public void PS()
+    {
+        AutoPlay = !AutoPlay;
+
+        BtnPlayStop.image.sprite = AutoPlay ? Stop : Play;
+
+    }
+
+    public void SU()
+    {
+        PresetIndex = ++PresetIndex % Presets.Length;
+
+        Time.timeScale = Presets[PresetIndex].TimeScale;
+
+        TextSpeed.text = Presets[PresetIndex].Text;
+    }
+
+    public void SD()
+    {
+        PresetIndex = (PresetIndex + Presets.Length -1) % Presets.Length;
+
+        Time.timeScale = Presets[PresetIndex].TimeScale;
+
+        TextSpeed.text = Presets[PresetIndex].Text;
+    }
+
+    public void NG()
+    {
+        ApplyRule();
     }
 }
