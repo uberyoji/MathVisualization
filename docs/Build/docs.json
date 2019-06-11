@@ -1,6 +1,6 @@
 {
 "companyName": "deviantsoft",
-"productName": "GoldenRatio",
+"productName": "unity webgl experiments",
 "dataUrl": "docs.data.unityweb",
 "wasmCodeUrl": "docs.wasm.code.unityweb",
 "wasmFrameworkUrl": "docs.wasm.framework.unityweb",
