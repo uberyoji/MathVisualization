@@ -30,6 +30,8 @@ public class OrbitCamera : MonoBehaviour
     float lastz = 0f;
     float dz = 0f;
 
+    int lastf = 0;
+
     // Use this for initialization
     void Start()
     {
@@ -44,7 +46,7 @@ public class OrbitCamera : MonoBehaviour
         
         if (Input.touchCount == 1)
         {            
-            if (Input.GetTouch(0).phase == TouchPhase.Began)
+            if (Input.GetTouch(0).phase == TouchPhase.Began || Input.GetTouch(0).fingerId != lastf )
             {
                 lastx = Input.GetTouch(0).position.x; // just started touching to dx,dy is now ref.
                 lasty = Input.GetTouch(0).position.y;
@@ -57,6 +59,8 @@ public class OrbitCamera : MonoBehaviour
 
             lastx = Input.GetTouch(0).position.x;
             lasty = Input.GetTouch(0).position.y;
+
+            lastf = Input.GetTouch(0).fingerId;
         }
 
         // mouse input
