@@ -81,6 +81,13 @@ public class TreeSeed : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if(Iteration==0)    // is root?
+        {
+            Variant = URLParameters.GetSearchParameters().GetInt("variant", Variant);
+            MaxIterationAmount = URLParameters.GetSearchParameters().GetInt("maxiteration", MaxIterationAmount);
+            GrowthDelay = (float)URLParameters.GetSearchParameters().GetDouble("growthdelay", GrowthDelay);
+        }
+
         StartGrowthTime = Time.time;
         EndGrowthTime = Time.time + GrowthDelay;
 
@@ -127,9 +134,8 @@ public class TreeSeed : MonoBehaviour
             case 4: // spread separation across branches
                 float Angle = Branch.SeparationAngle * Branch.Iteration / Branch.MaxIterationAmount;
                 return (-Angle + 2 * Angle * Branch.SplitIndex);
-
         }
-        return 0f;
+        return -Branch.SeparationAngle + 2 * Branch.SeparationAngle * Branch.SplitIndex;
     }
 
     void UpdateBranch( BranchData B )

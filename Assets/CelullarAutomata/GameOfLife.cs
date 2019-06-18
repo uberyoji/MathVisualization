@@ -25,6 +25,15 @@ public class GameOfLife : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GridWidth = URLParameters.GetSearchParameters().GetInt("size", GridWidth);
+        RuleA = URLParameters.GetSearchParameters().GetInt("a", RuleA);
+        RuleB = URLParameters.GetSearchParameters().GetInt("b", RuleB);
+        RuleC = URLParameters.GetSearchParameters().GetInt("c", RuleC);
+        RuleD = URLParameters.GetSearchParameters().GetInt("d", RuleD);
+
+        Frequency = (float)URLParameters.GetSearchParameters().GetDouble("freq", Frequency);
+        InitialSeedChance = (float)URLParameters.GetSearchParameters().GetDouble("seed", InitialSeedChance);
+
         Cells = new bool[2,GridWidth, GridWidth];
 
         // set initial seed

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311912, g: 0.3807398, b: 0.3587271, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -224,13 +224,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GridWidth: 64
-  RuleA: 1
-  RuleB: 2
-  RuleC: 2
+  RuleA: 2
+  RuleB: 3
+  RuleC: 3
   RuleD: 3
   Frequency: 10
-  InitialSeedChance: 0.5
-  ApplyRule: 0
+  InitialSeedChance: 0.75
+  GotoGeneration: 1024
   Prefab: {fileID: 5217632981690038018, guid: baa7214a176e48b4b9b4f3de03438fc9, type: 3}
   CellOff: {fileID: 2100000, guid: 385ed74fb555fb148ba6313b63c2f7fc, type: 2}
   CellOn: {fileID: 2100000, guid: 191a6083f551bc14cab33badb2d05b7a, type: 2}

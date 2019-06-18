@@ -18,6 +18,10 @@ public class CellularAutomata : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GridWidth = URLParameters.GetSearchParameters().GetInt("size", GridWidth);
+        RuleNumber = URLParameters.GetSearchParameters().GetInt("rule", RuleNumber);
+        Frequency = (float)URLParameters.GetSearchParameters().GetDouble("freq", Frequency);
+
         Cells = new bool[GridWidth, GridWidth];
 
         Cells[GridWidth / 2,0] = true; // initial seed
