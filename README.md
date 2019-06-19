@@ -21,6 +21,8 @@ https://uberyoji.github.io/MathVisualization/
 | GoldenRatio		 | Ratio visualizer (broken for now as it only shows the golden ratio) |
 | Fourier 			 | Shows fourier transform (camera is a bit off in webgl. to fix.)
 
+---
+
 ### CellularAutomata
 Param that can be passed to the scene. Active cell at start is always the center one for now.
 
@@ -29,6 +31,8 @@ Param that can be passed to the scene. Active cell at start is always the center
 | size    | int | Specifies the number of cells in 1d |
 | rule    | int | Specifies the rule to apply. See Wolfram (http://mathworld.wolfram.com/ElementaryCellularAutomaton.html) |
 | freq    | float | Specifies the refresh rate of generation. |
+
+---
 
 ### GameOfLife
 Param that can be passed to the scene. Active cells at start are determined by seed value.
@@ -43,9 +47,10 @@ Param that can be passed to the scene. Active cells at start are determined by s
 | freq    | float | Specifies the refresh rate of generation. |
 | seed    | float | Probability of cell begin active at start of simulation. |
 
+---
 
 ### GameOfLifeCube
-Param that can be passed to the scene. Active cells is always the center one for now.
+Param that can be passed to the scene. Active cells at start are at center of the cube unless randomized by specifying it in url.
 
 | Param         | Type    | Purpose  |
 |:--------------|:-------:|:-----|
@@ -58,8 +63,12 @@ Param that can be passed to the scene. Active cells is always the center one for
 | seed    | float | Probability of cell begin active at start of simulation. |
 | randomize | int | If set to 1, cells are actived according to seed on start. |
 
+---
+
 ### Mandalas
 No params for now.
+
+---
 
 ### Tree
 | Param         | Type    | Purpose  |
@@ -68,15 +77,12 @@ No params for now.
 | maxiteration    | int | Specifies the number of generation to spawn. |
 | growthdelay    | float | Time for branch to grow in secs.  |
 
+---
+
 ### GoldenRatio
 No params for now.
 
+---
+
 ### Fourier
 No params for now.
-
-
-
-
-
-
-
