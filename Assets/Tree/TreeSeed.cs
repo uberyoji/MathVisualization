@@ -4,10 +4,6 @@ using UnityEngine;
 
 // Inspiration: https://generativelandscapes.wordpress.com/2014/10/07/fractal-trees-basic-l-system-example-9-4/
 
-// TODO: Add variant system
-// TODO: Variant: 3 Branches (trident)
-// TODO: Variant: 1 angled + 1straight followed by 2 angled
-// TODO: Variant: 1 straight + 1 alternating angled
 // TODO: Add noise on separation angle
 // TODO: Add noise on distance ratio
 
