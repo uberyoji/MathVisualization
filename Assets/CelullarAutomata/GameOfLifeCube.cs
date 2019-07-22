@@ -28,9 +28,25 @@ public class GameOfLifeCube : MonoBehaviour
 
     private Dictionary<int,Material> CubeMats = new Dictionary<int, Material>();
 
+    public bool RandomizeSeed = false;
+
     // Start is called before the first frame update
     void Start()
     {
+        GridDimension = URLParameters.GetSearchParameters().GetInt("size", GridDimension);
+        RuleA = URLParameters.GetSearchParameters().GetInt("a", RuleA);
+        RuleB = URLParameters.GetSearchParameters().GetInt("b", RuleB);
+        RuleC = URLParameters.GetSearchParameters().GetInt("c", RuleC);
+        RuleD = URLParameters.GetSearchParameters().GetInt("d", RuleD);
+
+        int Randomize = 0;
+        Randomize = URLParameters.GetSearchParameters().GetInt("randomize", Randomize);
+        RandomizeSeed = Randomize != 0;
+
+        InitialSeedChance = (float)URLParameters.GetSearchParameters().GetDouble("seed", InitialSeedChance);
+
+        Frequency = (float)URLParameters.GetSearchParameters().GetDouble("freq", Frequency);
+
         Cells = new bool[2,GridDimension, GridDimension,GridDimension];
 
         SetInitialSeed();
@@ -41,24 +57,34 @@ public class GameOfLifeCube : MonoBehaviour
 
     private void SetInitialSeed()
     {
-        if( GridDimension % 2 == 0 )
+        if (RandomizeSeed)
         {
-            int HGD = (GridDimension / 2) - 1;
-
-            for (int z = HGD; z < HGD + 2; z++)
-                for (int y = HGD; y < HGD + 2; y++)
-                    for (int x = HGD; x < HGD + 2; x++)
-                        Cells[0, x, y, z] = Cells[1, x, y, z] = true;
+            for (int z = 1; z < GridDimension - 1; z++)
+                for (int y = 1; y < GridDimension - 1; y++)
+                    for (int x = 1; x < GridDimension - 1; x++)
+                        Cells[0, x, y, z] = Cells[1, x, y, z] = Random.Range(0f, 1f) <= InitialSeedChance;
         }
         else
         {
-            int HGD = (GridDimension / 2);
+            if (GridDimension % 2 == 0)
+            {
+                int HGD = (GridDimension / 2) - 1;
 
-            for (int z = HGD-1; z < HGD + 2; z++)
-                for (int y = HGD-1; y < HGD + 2; y++)
-                    for (int x = HGD-1; x < HGD + 2; x++)
-                        Cells[0, x, y, z] = Cells[1, x, y, z] = true;
-        }
+                for (int z = HGD; z < HGD + 2; z++)
+                    for (int y = HGD; y < HGD + 2; y++)
+                        for (int x = HGD; x < HGD + 2; x++)
+                            Cells[0, x, y, z] = Cells[1, x, y, z] = true;
+            }
+            else
+            {
+                int HGD = (GridDimension / 2);
+
+                for (int z = HGD - 1; z < HGD + 2; z++)
+                    for (int y = HGD - 1; y < HGD + 2; y++)
+                        for (int x = HGD - 1; x < HGD + 2; x++)
+                            Cells[0, x, y, z] = Cells[1, x, y, z] = true;
+            }
+        }        
     }
 
     int Evaluate( int x, int y, int z )

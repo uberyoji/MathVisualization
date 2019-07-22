@@ -39,7 +39,7 @@ public class GameOfLife : MonoBehaviour
         // set initial seed
         for (int y = 1; y < GridWidth - 1; y++)
             for (int x = 1; x < GridWidth - 1; x++)
-                Cells[0,x, y] = Cells[1, x, y] = Random.Range(0f, 1f) < InitialSeedChance;
+                Cells[0,x, y] = Cells[1, x, y] = Random.Range(0f, 1f) <= InitialSeedChance;
 
         InitCells();
         UpdateCellMaterial();
