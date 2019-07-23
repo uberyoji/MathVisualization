@@ -21,6 +21,11 @@ public class FractalFlower : MonoBehaviour
         PetalCountPerIteration = URLParameters.GetSearchParameters().GetInt("count", PetalCountPerIteration);
         ThetaRatioPerIteration = (float)URLParameters.GetSearchParameters().GetDouble("theta", ThetaRatioPerIteration);
         InterIterationDelay = (float)URLParameters.GetSearchParameters().GetDouble("delay", InterIterationDelay);
+
+        Config.Angle = (float)URLParameters.GetSearchParameters().GetDouble("angle", Config.Angle);
+        Config.Speed = (float)URLParameters.GetSearchParameters().GetDouble("speed", Config.Speed);
+        Config.BaseLineWidth = (float)URLParameters.GetSearchParameters().GetDouble("width", Config.BaseLineWidth);
+        Config.LifeTime = (float)URLParameters.GetSearchParameters().GetDouble("lifetime", Config.LifeTime);
     }
 
     GameObject GetNextFreePetal(float Base, float Angle)

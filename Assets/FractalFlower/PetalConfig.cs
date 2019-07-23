@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class PetalConfig
 {
-    public float RemoveAfter = 1.0f;
+    public float LifeTime = 1.0f;
     public float Speed = 1f;
 
     public float BaseLineWidth = 0.2f;

@@ -16,7 +16,7 @@ public class Petal : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        DeathTime = Time.time + Config.RemoveAfter;
+        DeathTime = Time.time + Config.LifeTime;
 
         transform.position = Position;
 
@@ -45,7 +45,7 @@ public class Petal : MonoBehaviour
         }
         else
         {
-            float Eval = (DeathTime - Time.time) / Config.RemoveAfter;
+            float Eval = (DeathTime - Time.time) / Config.LifeTime;
             Eval = Mathf.Clamp(1f - Eval, 0f, 1f);
 
             float Scale = Config.WidthOverTime.Evaluate(Eval);
