@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/GoldenRatio/GoldenRatio.unity
     guid: f2e4d61ddda95ee4bbcb54541d6dfe02
+  - enabled: 1
+    path: Assets/FractalFlower/FractalFlower.unity
+    guid: 55fe0536d64f6d844be1246304857eac
   m_configObjects: {}

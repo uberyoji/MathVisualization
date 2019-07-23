@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FractalFlower : MonoBehaviour
 {
-    public int PetalPerIteration = 6;
+    public int PetalCountPerIteration = 6;
     public float ThetaRatioPerIteration = 0.5f;
     private float ThetaIteration = 0f;
 
@@ -13,31 +13,37 @@ public class FractalFlower : MonoBehaviour
     
     public GameObject PetalPrefab;
 
+    public PetalConfig Config;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        PetalCountPerIteration = URLParameters.GetSearchParameters().GetInt("count", PetalCountPerIteration);
+        ThetaRatioPerIteration = (float)URLParameters.GetSearchParameters().GetDouble("theta", ThetaRatioPerIteration);
+        InterIterationDelay = (float)URLParameters.GetSearchParameters().GetDouble("delay", InterIterationDelay);
     }
 
     GameObject GetNextFreePetal(float Base, float Angle)
     {        
         transform.eulerAngles = new Vector3(0, 0, Base+Angle);       // fixme optim
 
-        return GameObject.Instantiate(PetalPrefab, transform.position, transform.rotation); // fixme optim
+        GameObject P = GameObject.Instantiate(PetalPrefab, transform.position, transform.rotation); // fixme optim
+
+        P.GetComponent<Petal>().Config = Config;
+
+        return P;
     }
 
     void SpawnPetals()
     {
         float a = 0f;
-        float da = 360 / PetalPerIteration;
-
-        GameObject Petal;
+        float da = 360 / PetalCountPerIteration;
 
         transform.eulerAngles = new Vector3(0f, 0f, ThetaIteration);
 
-        for (int i = 0; i < PetalPerIteration; i++)
+        for (int i = 0; i < PetalCountPerIteration; i++)
         {
-            Petal = GetNextFreePetal(ThetaIteration,a);
+            GetNextFreePetal(ThetaIteration,a);
             a += da;
         }
 
