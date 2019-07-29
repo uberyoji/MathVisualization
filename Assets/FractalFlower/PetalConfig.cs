@@ -9,6 +9,8 @@ public class PetalConfig
     public float Speed = 1f;
 
     public float BaseLineWidth = 0.2f;
+    public float BaseLineLength = 1f;
+
     public AnimationCurve WidthOverTime;
     public Gradient ColorOverTime;
 

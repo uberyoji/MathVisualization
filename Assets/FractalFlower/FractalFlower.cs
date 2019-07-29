@@ -25,6 +25,7 @@ public class FractalFlower : MonoBehaviour
         Config.Angle = (float)URLParameters.GetSearchParameters().GetDouble("angle", Config.Angle);
         Config.Speed = (float)URLParameters.GetSearchParameters().GetDouble("speed", Config.Speed);
         Config.BaseLineWidth = (float)URLParameters.GetSearchParameters().GetDouble("width", Config.BaseLineWidth);
+        Config.BaseLineLength = (float)URLParameters.GetSearchParameters().GetDouble("length", Config.BaseLineLength);
         Config.LifeTime = (float)URLParameters.GetSearchParameters().GetDouble("lifetime", Config.LifeTime);
     }
 

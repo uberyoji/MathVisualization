@@ -25,15 +25,19 @@ public class Petal : MonoBehaviour
         float Scale = Config.WidthOverTime.Evaluate(0f);
         transform.localScale = new Vector3(Scale, Scale, 1f);
 
-        LR.startColor = Config.ColorOverTime.Evaluate(0f);
-        LR.endColor = Config.ColorOverTime.Evaluate(0f);
-        LR.widthMultiplier = Scale * Config.BaseLineWidth;
+        if( LR )
+        {
+            LR.startColor = Config.ColorOverTime.Evaluate(0f);
+            LR.endColor = Config.ColorOverTime.Evaluate(0f);
+            LR.widthMultiplier = Scale * Config.BaseLineWidth;
 
-        float C = Mathf.Cos( Mathf.Deg2Rad * Config.Angle );
-        float S = Mathf.Sin(Mathf.Deg2Rad * Config.Angle );
+            float C = Mathf.Cos(Mathf.Deg2Rad * Config.Angle/2f) * Config.BaseLineLength;
+            float S = Mathf.Sin(Mathf.Deg2Rad * Config.Angle/2f) * Config.BaseLineLength;
 
-        LR.SetPosition(0, new Vector3(-C, S,0f));
-        LR.SetPosition(2, new Vector3(-C, -S, 0f));
+            LR.SetPosition(0, new Vector3(-C, S, 0f));
+            LR.SetPosition(1, new Vector3(0f, 0f, 0f));
+            LR.SetPosition(2, new Vector3(-C, -S, 0f));
+        }        
     }
 
     // Update is called once per frame
@@ -50,10 +54,12 @@ public class Petal : MonoBehaviour
 
             float Scale = Config.WidthOverTime.Evaluate(Eval);
 
-            LR.startColor = Config.ColorOverTime.Evaluate(Eval);
-            LR.endColor = Config.ColorOverTime.Evaluate(Eval);
-
-            LR.widthMultiplier = Scale * Config.BaseLineWidth;
+            if( LR )
+            {
+                LR.startColor = Config.ColorOverTime.Evaluate(Eval);
+                LR.endColor = Config.ColorOverTime.Evaluate(Eval);
+                LR.widthMultiplier = Scale * Config.BaseLineWidth;
+            }            
             
             transform.localScale = new Vector3(Scale, Scale, 1f);
 
